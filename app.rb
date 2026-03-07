@@ -120,7 +120,7 @@ class PdfConversionApi < Sinatra::Base
       [status.exitstatus&.zero?, log]
     end
   rescue Timeout::Error
-    ["ghostscript timed out after #{GS_TIMEOUT}s", false]
+    [false, "ghostscript timed out after #{GS_TIMEOUT}s"]
   end
 
   def encode_header(log)
