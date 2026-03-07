@@ -1,0 +1,8 @@
+.claude
+.idea
+.git
+.gitignore
+.ruby-version
+tmp
+docker-compose.yml
+README.md
