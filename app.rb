@@ -57,7 +57,7 @@ class PdfConversionApi < Sinatra::Base
 
     headers "X-Ghostscript-Log" => encode_header(log)
     content_type "application/pdf"
-    attachment "output.pdf"
+    attachment "pdfa3.pdf"
     File.binread(output_path)
   ensure
     File.delete(input_path) rescue nil if input_path
