@@ -114,6 +114,10 @@ services:
       GS_TIMEOUT: 120
 ```
 
+## Disclaimer
+
+This software is provided as-is, without any warranty. It is not a certified e-invoicing solution. The authors assume no responsibility for the correctness, legal compliance, or fitness for purpose of any generated documents. You are solely responsible for validating all output before use in invoicing, tax filing, or long-term archival.
+
 ## License
 
 AGPL-3.0 — inherited from [Ghostscript](https://www.ghostscript.com/), which is licensed under the GNU Affero General Public License v3.0.
