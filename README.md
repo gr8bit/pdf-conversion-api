@@ -37,15 +37,13 @@ Converts a PDF to PDF/A-3.
 |--------|------|-------------|
 | `file` | File | PDF file    |
 
-**Success (200):**
-- Body: PDF/A-3 file (`application/pdf`)
-- Header `Content-Disposition: attachment; filename="output.pdf"`
-- Header `X-Ghostscript-Log`: Ghostscript output (single line, max 4096 chars)
+**Response:** A `Content-Type: application/pdf` response means success. Any other content type indicates an error — the body will be `text/plain` with a human-readable error message.
 
-**Errors:**
-- `400` — missing parameter (plain text)
-- `413` — upload exceeds size limit (plain text)
-- `500` — Ghostscript error, full output in body (plain text)
+On success, the response also includes:
+- Header `Content-Disposition: attachment; filename="pdfa3.pdf"`
+- Header `X-Ghostscript-Log`: Ghostscript output (see [below](#x-ghostscript-log))
+
+**Error status codes:** `400` (missing parameter), `413` (upload too large), `500` (Ghostscript failure)
 
 ```sh
 curl -F "file=@invoice.pdf" http://localhost:8080/to_pdfa3 -o output.pdf
@@ -65,15 +63,13 @@ Converts a PDF to a ZUGFeRD-compliant PDF/A-3 with embedded Factur-X XML.
 | `xml`  | File   | Factur-X XML invoice file            |
 | `date` | String | Invoice date as ISO 8601, e.g. `2024-01-15T10:00:00+01:00` |
 
-**Success (200):**
-- Body: ZUGFeRD PDF/A-3 file (`application/pdf`)
-- Header `Content-Disposition: attachment; filename="zugferd.pdf"`
-- Header `X-Ghostscript-Log`: Ghostscript output (single line, max 4096 chars)
+**Response:** A `Content-Type: application/pdf` response means success. Any other content type indicates an error — the body will be `text/plain` with a human-readable error message.
 
-**Errors:**
-- `400` — missing or invalid parameter (plain text)
-- `413` — upload exceeds size limit (plain text)
-- `500` — Ghostscript error, full output in body (plain text)
+On success, the response also includes:
+- Header `Content-Disposition: attachment; filename="zugferd.pdf"`
+- Header `X-Ghostscript-Log`: Ghostscript output (see [below](#x-ghostscript-log))
+
+**Error status codes:** `400` (missing/invalid parameter), `413` (upload too large), `500` (Ghostscript failure)
 
 ```sh
 curl -F "file=@invoice.pdf" \
@@ -81,6 +77,12 @@ curl -F "file=@invoice.pdf" \
      -F "date=2024-01-15T10:00:00+01:00" \
      http://localhost:8080/to_zugferd -o zugferd.pdf
 ```
+
+### `X-Ghostscript-Log`
+
+Both conversion endpoints return the Ghostscript log output in the `X-Ghostscript-Log` response header. Non-printable characters and `%` are percent-encoded (e.g. newlines become `%0A`), printable ASCII passes through as-is.
+
+The header is limited to 4096 bytes. If the encoded log exceeds this limit, it is truncated and padded with `~` characters to exactly 4096 bytes. To detect truncation: if the raw header value (before unescaping the percent-encoded sequences) is 4096 bytes long and ends with `~`, the log was truncated.
 
 ## Configuration
 

@@ -14,6 +14,7 @@ class PdfConversionApi < Sinatra::Base
 
   MAX_UPLOAD_BYTES = Integer(ENV.fetch("MAX_UPLOAD_MB", 50)) * 1024 * 1024
   GS_TIMEOUT = Integer(ENV.fetch("GS_TIMEOUT", 60))
+  HEADER_LIMIT = 4096
 
   configure do
     set :show_exceptions, false
@@ -124,7 +125,24 @@ class PdfConversionApi < Sinatra::Base
   end
 
   def encode_header(log)
-    log.gsub(/[^\x20-\x7E]/, " ").squeeze(" ").strip[0, 4096]
+    result = +""
+    remaining_chars = log.length
+    log.each_char do |char|
+      remaining_chars -= 1
+
+      encoded = char.bytes.map { |b|
+        b >= 0x20 && b <= 0x7E && b != 0x25 ? b.chr : "%%%02X" % b
+      }.join
+      total_size = result.bytesize + encoded.bytesize
+      if total_size > HEADER_LIMIT || total_size == HEADER_LIMIT && remaining_chars > 0
+        # will overflow, so truncate and add padding to reach the limit
+        result << "~" * (HEADER_LIMIT - result.bytesize)
+        break
+      end
+      result << encoded
+    end
+
+    result
   end
 
   def save_upload(upload, suffix: ".pdf")
