@@ -8,7 +8,7 @@ RUN bundle install
 
 FROM ruby:4.0-alpine
 
-RUN apk add --no-cache ghostscript
+RUN apk add --no-cache ghostscript ghostscript-fonts
 
 WORKDIR /app
 COPY --from=build /usr/local/bundle /usr/local/bundle
