@@ -84,6 +84,17 @@ Both conversion endpoints return the Ghostscript log output in the `X-Ghostscrip
 
 The header is limited to 4096 bytes. If the encoded log exceeds this limit, it is truncated and padded with `~` characters to exactly 4096 bytes. To detect truncation: if the raw header value (before unescaping the percent-encoded sequences) is 4096 bytes long and ends with `~`, the log was truncated.
 
+## Important: Validate your output
+
+This service performs PDF conversions using Ghostscript, but **a successful HTTP 200 response does not guarantee a valid PDF/A-3 or ZUGFeRD document**. Ghostscript may produce output that is structurally incomplete or non-conformant depending on the input PDF.
+
+You **must** validate the output before using it in production:
+
+- **[veraPDF](https://verapdf.org/)** — open-source PDF/A validator. Use this to verify PDF/A-3 conformance.
+- **[Mustang](https://www.mustangproject.org/)** — open-source ZUGFeRD/Factur-X library (Java). Use this to validate that the embedded XML, metadata, and PDF/A structure conform to the ZUGFeRD standard.
+
+Do not skip validation. Invalid documents may be silently rejected by recipients, tax authorities, or archiving systems.
+
 ## Configuration
 
 | Environment variable | Default | Description |
