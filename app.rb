@@ -5,6 +5,7 @@ require "open3"
 require "time"
 require "securerandom"
 require "timeout"
+require "tmpdir"
 
 class PdfConversionApi < Sinatra::Base
   VENDOR_DIR = File.expand_path("vendor", __dir__).freeze
