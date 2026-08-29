@@ -1,12 +1,13 @@
-FROM ruby:4.0-alpine AS build
+FROM ruby:4.0.6-alpine3.24 AS build
 
 RUN apk add --no-cache build-base
 
 WORKDIR /app
 COPY Gemfile Gemfile.lock ./
+ENV BUNDLE_FROZEN=true
 RUN bundle install
 
-FROM ruby:4.0-alpine
+FROM ruby:4.0.6-alpine3.24
 
 RUN apk add --no-cache ghostscript ghostscript-fonts
 
@@ -16,4 +17,4 @@ COPY . .
 
 EXPOSE 8080
 
-CMD ["bundle", "exec", "puma", "-p", "8080", "-e", "production"]
+CMD ["bundle", "exec", "puma", "-b", "tcp://0.0.0.0:8080", "-e", "production"]
