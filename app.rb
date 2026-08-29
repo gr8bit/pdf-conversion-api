@@ -81,6 +81,7 @@ class PdfConversionApi < Sinatra::Base
     cmd = [
       "gs",
       "--permit-file-read=#{VENDOR_DIR}/",
+      "--permit-file-read=#{xml_path}",
       "-sDEVICE=pdfwrite",
       "-dPDFA=3",
       "-dPDFACompatibilityPolicy=2",
