@@ -6,3 +6,18 @@
 tmp
 docker-compose.yml
 README.md
+
+# Local environment and secrets
+.env
+.env.*
+*.pem
+*.key
+*.p12
+*.log
+
+# Local development and build artifacts
+.bundle
+vendor/bundle
+coverage
+log
+.DS_Store
